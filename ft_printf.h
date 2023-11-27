@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/23 15:40:32 by wnocchi           #+#    #+#             */
-/*   Updated: 2023/11/23 17:24:23 by wnocchi          ###   ########.fr       */
+/*   Updated: 2023/11/27 14:59:26 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ int		is_di(int nb);
 int		is_xu(int hexa);
 int		is_u(unsigned int nb);
 int		is_s(const char *s);
-
+int		mandatory(char *fmt, va_list args);
+int		ft_printf(const char *s, ...);
 
 #endif

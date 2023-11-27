@@ -6,11 +6,17 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 09:36:56 by wnocchi           #+#    #+#             */
-/*   Updated: 2023/11/24 09:48:05 by wnocchi          ###   ########.fr       */
+/*   Updated: 2023/11/27 16:24:14 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_printf.h"
+#include <stddef.h>
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <stdarg.h>
 
 int	ft_putchar(char c)
 {
@@ -23,7 +29,7 @@ size_t	ft_strlen(char *s)
 	size_t	i;
 
 	i = 0;
-	while (s[1])
+	while (s[i])
 		i++;
 	return (i);
 }
@@ -48,7 +54,7 @@ int	ft_putnbr_hexa(long long nb)
 	len = 0;
 	if (nb < 0)
 	{
-		ft_putchar_hexa('-');
+		ft_putchar('-');
 		nb *= -1;
 	}
 	if (nb >= 10)
@@ -57,7 +63,7 @@ int	ft_putnbr_hexa(long long nb)
 		len += ft_putnbr_hexa(nb % 16);
 	}
 	else
-		len += ft_putchar_hexa(nb + 48);
+		len += ft_putchar(nb + 48);
 	return (len);
 }
 
@@ -78,17 +84,59 @@ int	ft_putnbr(long int nb)
 	}
 	else
 		len += ft_putchar(nb + 48);
+	return (len);
 }
 
-int	is_c(const char *s)
+int	ft_putnbr_xu(long long nb)
 {
-	ft_putchar(*s);
+	size_t	len;
+
+	len = 0;
+	if (nb < 0)
+	{
+		ft_putchar('-');
+		nb *= -1;
+	}
+	if (nb >= 16)
+	{
+		len += ft_putnbr_hexa(nb / 16);
+		len += ft_putnbr_hexa(nb % 16);
+	}
+	else
+		len += ft_putchar(nb + 'A');
+	return (len);
+}
+
+int	ft_putnbr_xl(long long nb)
+{
+	size_t	len;
+
+	len = 0;
+	if (nb < 0)
+	{
+		ft_putchar('-');
+		nb *= -1;
+	}
+	if (nb >= 16)
+	{
+		len += ft_putnbr_hexa(nb / 16);
+		len += ft_putnbr_hexa(nb % 16);
+	}
+	else
+		len += ft_putchar(nb + 'a');
+	return (len);
+}
+
+
+int	is_c(char c)
+{
+	ft_putchar(c);
 	return (1);
 }
 
 int	is_di(int nb)
 {
-	return (ft_putnbr);
+	return (ft_putnbr(nb));
 }
 
 int	is_xu(int hexa)
@@ -114,30 +162,71 @@ int	is_s(const char *s)
 		return (6);
 	}
 	else
-		ft_putstr(s);
-	return (ft_strlen(s));
+		ft_putstr((char *)s);
+	return (ft_strlen((char *)s));
 }
 
-int	is_percent(int c)
+int is_p(void *p)
 {
-	return (ft_putchar(c));
+	write(1, "0x", 2);
+	return (ft_putnbr_hexa((unsigned long) p + 2));
 }
 
-int	mandatory(char *fmt, va_list args)
+int	mandatory(const char *fmt, va_list args)
 {
-	size_t	i;
-	char	*s;
-	int		d;
+	int		len;
+
+	len = 0;
+		if (*fmt == 's')
+			len += is_s(va_arg(args, char *));
+		else if (*fmt == 'c')
+			len += is_c((char)va_arg(args, int));
+		else if (*fmt == 'd' || *fmt == 'i')
+			len += is_di(va_arg(args, int));
+		else if (*fmt == 'p')
+			len += is_p(va_arg(args, void *));
+		else if (*fmt == 'u')
+			len += is_u(va_arg(args, unsigned int));
+		else if (*fmt == 'x')
+			len += is_xl(va_arg(args, unsigned long));
+		else if (*fmt == 'X')
+			len += is_xu(va_arg(args, unsigned long));
+		else if (*fmt == '%')
+			len += ft_putchar('%');
+	return (len);
+}
+
+int	ft_printf(const char *s, ...)
+{
+	int	i;
+	int	len;
+
+	va_list(args);
+
 	i = 0;
-	while (fmt[i])
+	len = 0;
+	va_start(args, s);
+	if (!s)
+		return (-1);
+	while (s[i])
 	{
-		if (fmt[i] == '%')
+		if (s[i] == '%')
 		{
 			i++;
-			if(fmt[i] == 's')
-				*s = va_arg(args, char *);
-				is_s(s);
+			len += mandatory(&s[i++], args);
+		}
+		else
+		{
+			len += ft_putchar(s[i]);
+			i++;
 		}
 	}
+	va_end(args);
+	return (len);
+}
+
+int	main(void)
+{
+	ft_printf("%d, 12");
 }
 
