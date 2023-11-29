@@ -1,53 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_printf.c                                        :+:      :+:    :+:   */
+/*   ft_putstr.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/22 09:36:56 by wnocchi           #+#    #+#             */
-/*   Updated: 2023/11/28 14:35:40 by wnocchi          ###   ########.fr       */
+/*   Created: 2023/11/28 13:36:53 by wnocchi           #+#    #+#             */
+/*   Updated: 2023/11/28 13:55:55 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-int	ft_printf(const char *s, ...)
+int	ft_putstr(char *s)
 {
-	int	i;
-	int	len;
+	size_t	i;
 
-	va_list(args);
 	i = 0;
-	len = 0;
-	va_start(args, s);
 	if (!s)
-		return (-1);
+		return (0);
 	while (s[i])
 	{
-		if (s[i] == '%')
-		{
-			i++;
-			len += ft_mandatory(&s[i++], args);
-		}
-		else
-		{
-			len += ft_putchar(s[i]);
-			i++;
-		}
+		ft_putchar(s[i]);
+		i++;
 	}
-	va_end(args);
-	return (len);
+	return (i);
 }
-
-// int	main(void)
-// {
-// 	int	len;
-// 	// char *ptr;
-
-// 	len = ft_printf("%p", -1);
-// 	// ft_printf("%d", len);
-
-// 	printf("%p", -1);
-// 	// ft_printf("%s\n%s\n%s\n", "salut", "les", "amis");
-// }
